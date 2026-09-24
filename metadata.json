@@ -1,0 +1,10 @@
+{
+  "name": "ZafaTour_CGC",
+  "description": "Travel Umroh \u0026 Haji ZafaTour Perwakilan CitraGrand City Palembang.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
