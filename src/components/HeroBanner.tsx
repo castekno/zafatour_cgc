@@ -14,7 +14,7 @@ export default function HeroBanner({}: HeroBannerProps) {
         'Memiliki izin resmi PPIU dan PIHK dari Kemenag RI sesuai dengan peraturan yang berlaku',
       icon: (
         <svg
-          className="w-6 h-6 sm:w-10 md:w-12 sm:h-10 md:h-12 text-[#0c1b40]"
+          className="w-5 h-5 sm:w-6 sm:h-6 text-[#0c1b40]"
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +41,7 @@ export default function HeroBanner({}: HeroBannerProps) {
         'Memiliki standar pelayanan yang tinggi dan telah tersertifikasi oleh Lembaga Sertifikasi yang kredibel',
       icon: (
         <svg
-          className="w-6 h-6 sm:w-10 md:w-12 sm:h-10 md:h-12 text-[#0c1b40]"
+          className="w-5 h-5 sm:w-6 sm:h-6 text-[#0c1b40]"
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -73,7 +73,7 @@ export default function HeroBanner({}: HeroBannerProps) {
         'Memberangkatkan lebih dari 30.000 jamaah umrah selama lebih dari 10 tahun melayani',
       icon: (
         <svg
-          className="w-6 h-6 sm:w-10 md:w-12 sm:h-10 md:h-12 text-[#0c1b40]"
+          className="w-5 h-5 sm:w-6 sm:h-6 text-[#0c1b40]"
           viewBox="0 0 24 24"
           fill="currentColor"
           xmlns="http://www.w3.org/2000/svg"
@@ -92,7 +92,7 @@ export default function HeroBanner({}: HeroBannerProps) {
         'Mengutamakan kenyamanan dalam fasilitas dan pelayanan, mulai dari hotel, transportasi, hingga konsumsi',
       icon: (
         <svg
-          className="w-6 h-6 sm:w-10 md:w-12 sm:h-10 md:h-12 text-[#0c1b40]"
+          className="w-5 h-5 sm:w-6 sm:h-6 text-[#0c1b40]"
           viewBox="0 0 24 24"
           fill="currentColor"
           xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +112,7 @@ export default function HeroBanner({}: HeroBannerProps) {
         'Menghadirkan pengalaman spiritual yang tak terlupakan, dengan bimbingan sesuai tuntunan syariat Islam',
       icon: (
         <svg
-          className="w-6 h-6 sm:w-10 md:w-12 sm:h-10 md:h-12 text-[#0c1b40]"
+          className="w-5 h-5 sm:w-6 sm:h-6 text-[#0c1b40]"
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -133,7 +133,7 @@ export default function HeroBanner({}: HeroBannerProps) {
         'Menyediakan layanan lengkap mulai dari persiapan dokumen, tiket pesawat, akomodasi, hingga bimbingan ibadah',
       icon: (
         <svg
-          className="w-6 h-6 sm:w-10 md:w-12 sm:h-10 md:h-12 text-[#0c1b40]"
+          className="w-5 h-5 sm:w-6 sm:h-6 text-[#0c1b40]"
           viewBox="0 0 24 24"
           fill="currentColor"
           xmlns="http://www.w3.org/2000/svg"
@@ -168,7 +168,7 @@ export default function HeroBanner({}: HeroBannerProps) {
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tight leading-snug mb-3">
               Wujudkan Niat Suci ke Baitullah Bersama{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-amber-300 to-sky-300">
-                Zafa Tour CGC
+                Zafa Tour
               </span>
             </h1>
 
@@ -182,39 +182,39 @@ export default function HeroBanner({}: HeroBannerProps) {
         </div>
       </section>
 
-      {/* "Mengapa Zafa Tour" Section - Optimized for compact mobile scroll */}
+      {/* "Mengapa Zafa Tour" Section - Ultra-compact height across all gadgets */}
       <section
         id="why-us"
-        className="py-8 sm:py-16 md:py-20 bg-white border-b border-slate-100"
+        className="py-4 sm:py-5 md:py-6 bg-white border-b border-slate-100"
       >
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           {/* Main Title */}
-          <div className="text-center mb-6 sm:mb-12 md:mb-16">
-            <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold text-[#1e293b] tracking-tight">
+          <div className="text-center mb-3 sm:mb-4">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-[#1e293b] tracking-tight">
               Mengapa Zafa Tour
             </h2>
           </div>
 
-          {/* 6 Features Grid - 2 columns on mobile, 3 columns on desktop */}
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-6 lg:gap-8">
+          {/* 6 Features Grid - 2 cols on mobile, 3 cols on tablet, 6 cols on desktop */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5 lg:gap-3">
             {whyUsItems.map((item) => (
               <div
                 key={item.id}
                 id={`feature-${item.id}`}
-                className="flex flex-col items-center text-center p-2.5 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-50/70 sm:bg-transparent border border-slate-100/90 sm:border-0 hover:bg-slate-100/80 sm:hover:bg-transparent transition-all duration-200 group"
+                className="flex flex-col items-center text-center p-2 sm:p-2.5 rounded-xl bg-slate-50/70 border border-slate-100/90 hover:bg-blue-50/50 transition-all duration-200 group"
               >
                 {/* Dark Navy Icon */}
-                <div className="mb-2 sm:mb-4 w-9 h-9 sm:w-14 sm:h-14 rounded-lg sm:rounded-none bg-blue-50/80 sm:bg-transparent flex items-center justify-center transform group-hover:scale-105 transition-transform duration-300 shrink-0">
+                <div className="mb-1.5 w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50/80 flex items-center justify-center transform group-hover:scale-105 transition-transform duration-200 shrink-0">
                   {item.icon}
                 </div>
 
                 {/* Feature Title */}
-                <h3 className="text-xs sm:text-base lg:text-lg font-bold text-[#0c1b40] mb-1 sm:mb-2 leading-snug">
+                <h3 className="text-[11px] sm:text-xs md:text-sm font-bold text-[#0c1b40] mb-0.5 leading-tight">
                   {item.title}
                 </h3>
 
                 {/* Feature Description */}
-                <p className="text-[10.5px] sm:text-xs md:text-sm text-slate-600 font-normal leading-relaxed max-w-sm">
+                <p className="text-[9.5px] sm:text-[10px] md:text-[11px] text-slate-500 font-normal leading-tight line-clamp-2">
                   {item.description}
                 </p>
               </div>

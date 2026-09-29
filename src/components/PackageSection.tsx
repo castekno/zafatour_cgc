@@ -71,6 +71,36 @@ function getPackageWhatsAppLink(pkg: UmrahPackage, waNumber?: string): string {
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }
 
+export type RouteFilterType = 'All' | 'PLM' | 'CGK';
+
+export function getPackageRouteCode(pkg: UmrahPackage): 'PLM' | 'CGK' | 'UNKNOWN' {
+  const title = (pkg.title || '').toUpperCase();
+  const airport = (pkg.departureAirport || '').toUpperCase();
+
+  const titleHasPLM = title.includes('PLM');
+  const titleHasCGK = title.includes('CGK');
+  if (titleHasPLM && !titleHasCGK) return 'PLM';
+  if (titleHasCGK && !titleHasPLM) return 'CGK';
+
+  const airportHasPLM = airport.includes('PLM');
+  const airportHasCGK = airport.includes('CGK');
+  if (airportHasPLM && !airportHasCGK) return 'PLM';
+  if (airportHasCGK && !airportHasPLM) return 'CGK';
+
+  if (titleHasPLM || airportHasPLM) return 'PLM';
+  if (titleHasCGK || airportHasCGK) return 'CGK';
+
+  return 'UNKNOWN';
+}
+
+export function matchesRouteFilter(pkg: UmrahPackage, filter: RouteFilterType): boolean {
+  if (filter === 'All') return true;
+  const route = getPackageRouteCode(pkg);
+  if (route === filter) return true;
+  const combined = `${pkg.title || ''} ${pkg.departureAirport || ''}`.toUpperCase();
+  return combined.includes(filter);
+}
+
 export default function PackageSection({
   packages,
   hotels,
@@ -78,21 +108,53 @@ export default function PackageSection({
 }: PackageSectionProps) {
   const pkgCategoryFilterId = useId();
   const pkgSelectFilterId = useId();
+  const pkgRouteFilterId = useId();
 
   const [categoryFilter, setCategoryFilter] = useState<'All' | PackageCategoryType>('All');
   const [selectedPackageTitle, setSelectedPackageTitle] = useState<string>('All');
+  const [routeFilter, setRouteFilter] = useState<RouteFilterType>('All');
   const [previewImage, setPreviewImage] = useState<{ url: string; title: string } | null>(null);
 
-  // Available unique package titles for filter picklist
+  // Available unique package titles for filter picklist (filtered by selected route and category)
   const availablePackageTitles = Array.from(
     new Set(
       packages
+        .filter((p) => {
+          if (categoryFilter !== 'All') {
+            const pCat = (p.category || '').toUpperCase();
+            if (categoryFilter === 'HAJI KHUSUS') {
+              if (!pCat.includes('HAJI KHUSUS') && !pCat.includes('HAJI PLUS')) return false;
+            } else if (categoryFilter === 'HAJI') {
+              if (!pCat.startsWith('HAJI') || pCat.includes('KHUSUS') || pCat.includes('PLUS')) return false;
+            } else if (categoryFilter === 'UMRAH') {
+              if (!pCat.startsWith('UMR')) return false;
+            }
+          }
+          if (routeFilter !== 'All') {
+            if (!matchesRouteFilter(p, routeFilter)) return false;
+          }
+          return true;
+        })
         .map((p) => (p.title || '').trim())
         .filter((t) => Boolean(t))
     )
   ).sort((a, b) => a.localeCompare(b, 'id'));
 
-  // Filter packages based on category & title
+  const handleRouteChange = (newRoute: RouteFilterType) => {
+    setRouteFilter(newRoute);
+    if (selectedPackageTitle !== 'All') {
+      const titleStillValid = packages.some(
+        (p) =>
+          (p.title || '').trim() === selectedPackageTitle &&
+          matchesRouteFilter(p, newRoute)
+      );
+      if (!titleStillValid) {
+        setSelectedPackageTitle('All');
+      }
+    }
+  };
+
+  // Filter packages based on category, route & title
   const filteredPackages = packages.filter((pkg) => {
     // 1. Category Filter
     if (categoryFilter !== 'All') {
@@ -106,7 +168,14 @@ export default function PackageSection({
       }
     }
 
-    // 2. Title Filter Picklist
+    // 2. Route Filter (PLM atau CGK)
+    if (routeFilter !== 'All') {
+      if (!matchesRouteFilter(pkg, routeFilter)) {
+        return false;
+      }
+    }
+
+    // 3. Title Filter Picklist
     if (selectedPackageTitle !== 'All') {
       if ((pkg.title || '').trim() !== selectedPackageTitle) {
         return false;
@@ -133,7 +202,7 @@ export default function PackageSection({
               </div>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              Paket Haji & Umroh <br /> <span className="text-emerald-600 block sm:inline">Zafatour CGC</span>
+              Paket Haji & Umroh <br /> 
             </h2>
             <p className="text-slate-600 text-sm mt-1">
               Data paket tersinkronisasi otomatis dari database Zafa Tour (khusus rute PLM & CGK).
@@ -198,6 +267,41 @@ export default function PackageSection({
                 </button>
               )}
             </div>
+
+            {/* Filter by Route (Picklist: PLM atau CGK) */}
+            <div className="flex items-center gap-1">
+              <label htmlFor={pkgRouteFilterId} className="sr-only">Filter Rute (PLM atau CGK)</label>
+              <div className="relative flex items-center">
+                <Plane className="pointer-events-none absolute left-3 w-3.5 h-3.5 text-slate-400" />
+                <select
+                  id={pkgRouteFilterId}
+                  value={routeFilter}
+                  onChange={(e) => handleRouteChange(e.target.value as RouteFilterType)}
+                  className={`appearance-none text-xs font-bold py-2 pl-8 pr-7 rounded-xl border shadow-xs focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer transition-all ${
+                    routeFilter !== 'All'
+                      ? 'bg-emerald-50 text-emerald-950 border-emerald-300 ring-1 ring-emerald-300'
+                      : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
+                  }`}
+                  title="Filter rute keberangkatan (Rute, PLM, atau CGK)"
+                >
+                  <option value="All">Rute</option>
+                  <option value="PLM">PLM</option>
+                  <option value="CGK">CGK</option>
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2 w-3.5 h-3.5 text-slate-400" />
+              </div>
+
+              {routeFilter !== 'All' && (
+                <button
+                  type="button"
+                  onClick={() => handleRouteChange('All')}
+                  className="p-2 text-slate-400 hover:text-rose-600 bg-white hover:bg-rose-50 rounded-xl border border-slate-200 transition-all text-xs"
+                  title="Reset filter rute"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -215,6 +319,7 @@ export default function PackageSection({
                 onClick={() => {
                   setSelectedPackageTitle('All');
                   setCategoryFilter('All');
+                  setRouteFilter('All');
                 }}
                 className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all"
               >
@@ -373,7 +478,7 @@ export default function PackageSection({
                           <span>{pkg.airline || 'Maskapai Reguler'}</span>
                         </div>
                         <div className="text-[11px] text-slate-500 pl-5">
-                          <span>{pkg.departureAirport || 'PLM'}</span>
+                          <span>{pkg.departureAirport || (getPackageRouteCode(pkg) !== 'UNKNOWN' ? `Rute ${getPackageRouteCode(pkg)}` : 'PLM')}</span>
                           {pkg.arrivalAirport && <span> → {pkg.arrivalAirport}</span>}
                         </div>
                       </div>

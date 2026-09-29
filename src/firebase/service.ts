@@ -1,6 +1,9 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import {
   getFirestore,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
   collection,
   doc,
   getDocs,
@@ -137,7 +140,7 @@ function handleWriteQuotaError(error: any, operationName: string) {
   }
 }
 
-// Lazy initialization of Firebase Firestore directly targeting dbzafatourcgc client SDK
+// Lazy initialization of Firebase Firestore directly targeting dbzafatourcgc client SDK with Persistent Cache
 let dbInstance: any = null;
 
 export function getFirestoreDb() {
@@ -152,10 +155,24 @@ export function getFirestoreDb() {
       
       const dbName = firebaseConfig.firestoreDatabaseId || FIREBASE_PROJECT_INFO.firestoreDatabaseName;
       try {
-        dbInstance = getFirestore(app, dbName);
-      } catch (e) {
-        console.warn('Could not bind named Firestore database, falling back to default:', e);
-        dbInstance = getFirestore(app);
+        // Mengaktifkan fitur Firestore Persistent Cache menggunakan IndexedDB multi-tab
+        dbInstance = initializeFirestore(app, {
+          localCache: persistentLocalCache({
+            tabManager: persistentMultipleTabManager(),
+          }),
+        }, dbName);
+      } catch (cacheErr: any) {
+        // Fallback jika Firestore sudah pernah diinisialisasi atau browser membatasi IndexedDB
+        console.warn('Persistent cache init fallback/notice:', cacheErr?.message || cacheErr);
+        try {
+          dbInstance = getFirestore(app, dbName);
+        } catch (e) {
+          try {
+            dbInstance = getFirestore(app);
+          } catch (fallbackErr) {
+            console.warn('Could not bind Firestore database:', fallbackErr);
+          }
+        }
       }
     }
     return dbInstance;
